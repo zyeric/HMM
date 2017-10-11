@@ -18,12 +18,18 @@
     <ClCompile Include="main.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="sequence_generator.cpp">
+    <ClCompile Include="gibbs_sample.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="coin_sequence.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="sequence_generator.h">
+    <ClInclude Include="gibbs_sample.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="coin_sequence.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

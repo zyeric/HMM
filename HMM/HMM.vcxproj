@@ -142,11 +142,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="gibbs_sample.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="sequence_generator.cpp" />
+    <ClCompile Include="coin_sequence.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="sequence_generator.h" />
+    <ClInclude Include="gibbs_sample.h" />
+    <ClInclude Include="coin_sequence.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

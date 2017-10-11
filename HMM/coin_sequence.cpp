@@ -1,13 +1,12 @@
-#include "sequence_generator.h"
+#include "coin_sequence.h"
 
-SequenceGenerator::SequenceGenerator(int state_num, std::vector<double> head_prob,
+CoinSequence::CoinSequence(std::vector<double> head_prob,
 	std::vector<std::vector<double>> transition_prob) {
-	state_num_ = state_num;
 	head_prob_ = head_prob;
 	transition_prob_ = transition_prob;
 }
 
-std::vector<std::pair<int, int>> SequenceGenerator::Generate(int length) {
+std::vector<std::pair<int, int>> CoinSequence::Generate(int length) {
 	std::random_device rd;
 	std::mt19937 gen(rd());
 	std::uniform_real_distribution<> dis(0, 1);
