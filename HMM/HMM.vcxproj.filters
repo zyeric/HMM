@@ -24,12 +24,18 @@
     <ClCompile Include="coin_sequence.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="uniform_generator.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="gibbs_sample.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="coin_sequence.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="uniform_generator.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
