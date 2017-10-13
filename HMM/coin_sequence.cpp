@@ -1,5 +1,6 @@
 #include "coin_sequence.h"
 #include "uniform_generator.h"
+#include <iostream>
 
 CoinSequence::CoinSequence() {
 	head_prob_ = { 0.5, 0.5, 0.5 };
@@ -37,4 +38,14 @@ void CoinSequence::Generate(int length, std::vector<int>& state_sequence,
 	}
 
 	delete gen;
+}
+
+void CoinSequence::PrintPara() {
+	std::cout << "Head prob:\n" <<
+		head_prob_[0] << "\t" << head_prob_[1] << "\t" << head_prob_[2] << std::endl;
+	std::cout << "Transition prob:\n" <<
+		transition_prob_[0][0] << "\t" << transition_prob_[0][1] << "\t" << transition_prob_[0][2] << std::endl <<
+		transition_prob_[1][0] << "\t" << transition_prob_[1][1] << "\t" << transition_prob_[1][2] << std::endl <<
+		transition_prob_[2][0] << "\t" << transition_prob_[2][1] << "\t" << transition_prob_[2][2] << std::endl <<
+		std::endl;
 }

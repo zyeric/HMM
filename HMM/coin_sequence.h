@@ -12,6 +12,7 @@ public:
 	*/
 	void Generate(int length, std::vector<int>& state_sequence,
 		std::vector<int>& observed_sequence);
+	void PrintPara();
 
 	std::vector<double> head_prob_;
 	std::vector<std::vector<double>> transition_prob_;

@@ -2,6 +2,9 @@
 #include <random>
 #include <numeric>
 #include <algorithm>
+#include <iostream>
+
+const int kSampleStep = 1;
 
 GibbsSample::GibbsSample(int length, std::vector<int> observed_sequence) {
 	length_ = length;
@@ -20,18 +23,18 @@ GibbsSample::~GibbsSample() {
 void GibbsSample::Estimate() {
 	InitSequence();
 
-	std::vector<int> tmp_state_sequence_(length_, 0);
 	double eps = 1e-4;
 	int iter_cnt = 1;
-	for (;;) {
-		tmp_state_sequence_[0] = UpdateFront();
-		for (int i = 1; i + 1 < length_; ++i) {
-			tmp_state_sequence_[i] = UpdateMid(i);
+	while (true) {
+		std::vector<std::vector<double>> probs;
+		for (int i = 0; i < length_; ++i) { probs.push_back(CalProb(i)); }
+		std::vector<std::vector<int>> seqs;
+		for (int i = 0; i < kSampleStep; ++i) {
+			seqs.push_back(RandomSampleSequence(probs));
 		}
-		tmp_state_sequence_[length_ - 1] = UpdateBack();
-		std::swap(state_sequence_, tmp_state_sequence_);
-		double updt_sum = UpdatePara();
+		double updt_sum = UpdatePara(seqs);
 		printf("Finish %d iteration, update sum: %.6lf.\n", iter_cnt, updt_sum);
+		std::swap(state_sequence_, seqs[0]);
 		if (updt_sum < eps) {
 			break;
 		}
@@ -54,7 +57,7 @@ void GibbsSample::InitSequence() {
 	}
 }
 
-int GibbsSample::RandomSelectCoin(double *prob) {
+int GibbsSample::RandomSelectCoin(std::vector<double> prob) {
 	double val = gen->NextNumber();
 	int ret = -1;
 	if (val <= prob[0]) {
@@ -69,60 +72,46 @@ int GibbsSample::RandomSelectCoin(double *prob) {
 	return ret;
 }
 
-int GibbsSample::UpdateFront() {
-	double *prob = new double[3];
-	for (int i = 0; i < 3; ++i) {
-		prob[i] = estimated_para_.transition_prob_[i][state_sequence_[1]];
-		if (observed_sequence_[0]) { prob[i] *= estimated_para_.head_prob_[i]; }
-		else { prob[i] *= (1 - estimated_para_.head_prob_[i]); }
+std::vector<int> GibbsSample::RandomSampleSequence(
+	std::vector<std::vector<double>> probs) {
+	std::vector<int> ret(length_, 0);
+	for (int i = 0; i < length_; ++i) {
+		ret[i] = RandomSelectCoin(probs[i]);
 	}
-	int ret = RandomSelectCoin(prob);
-	delete prob;
 	return ret;
 }
 
-int GibbsSample::UpdateMid(int index) {
-	double *prob = new double[3];
+std::vector<double> GibbsSample::CalProb(int index) {
+	std::vector<double> prob(3, 1);
 	for (int i = 0; i < 3; ++i) {
-		prob[i] = estimated_para_.transition_prob_[state_sequence_[index - 1]][i]
-			* estimated_para_.transition_prob_[i][state_sequence_[index + 1]];
+		if (index > 0) { prob[i] *= estimated_para_.transition_prob_[state_sequence_[index - 1]][i]; }
+		if (index + 1 < length_) { prob[i] *= estimated_para_.transition_prob_[i][state_sequence_[index + 1]]; }
 		if (observed_sequence_[index]) { prob[i] *= estimated_para_.head_prob_[i]; }
 		else { prob[i] *= (1 - estimated_para_.head_prob_[i]); }
 	}
-	int ret = RandomSelectCoin(prob);
-	delete prob;
-	return ret;
+	double sum = prob[0] + prob[1] + prob[2];
+	for (int i = 0; i < 3; ++i) { prob[i] /= sum; }
+	return prob;
 }
 
-int GibbsSample::UpdateBack() {
-	double *prob = new double[3];
-	for (int i = 0; i < 3; ++i) {
-		prob[i] = estimated_para_.transition_prob_[state_sequence_[length_ - 2]][i];
-		if (observed_sequence_[length_ - 1]) { prob[i] *= estimated_para_.head_prob_[i]; }
-		else { prob[i] *= (1 - estimated_para_.head_prob_[i]); }
-	}
-	int ret = RandomSelectCoin(prob);
-	delete prob;
-	return ret;
-}
-
-double GibbsSample::UpdatePara() {
+double GibbsSample::UpdatePara(std::vector<std::vector<int>> sequences) {
 	std::vector<int> coin_cnt(3, 0);
 	std::vector<int> head_cnt(3, 0);
 	std::vector<std::vector<int>> transition_cnt(3, std::vector<int>(3, 0));
 
-	for (int i = 0; i < length_; ++i) {
-		++coin_cnt[state_sequence_[i]];
-		if (observed_sequence_[i]) { ++head_cnt[state_sequence_[i]]; }
-	}
+	for (int j = 0; j < kSampleStep; ++j) {
+		for (int i = 0; i < length_; ++i) {
+			++coin_cnt[sequences[j][i]];
+			if (observed_sequence_[i]) { ++head_cnt[sequences[j][i]]; }
+		}
 
-	for (int i = 0; i + 1 < length_; ++i) {
-		++transition_cnt[state_sequence_[i]][state_sequence_[i + 1]];
+		for (int i = 0; i + 1 < length_; ++i) {
+			++transition_cnt[sequences[j][i]][sequences[j][i + 1]];
+		}
 	}
-
 	double ret = 0;
 	for (int i = 0; i < 3; ++i) {
-		double val = 1.0 * head_cnt[i] / coin_cnt[i];
+		double val = coin_cnt[i] == 0 ? 0 : 1.0 * head_cnt[i] / coin_cnt[i];
 		ret += abs(val - estimated_para_.head_prob_[i]);
 		estimated_para_.head_prob_[i] = val;
 	}
@@ -130,7 +119,7 @@ double GibbsSample::UpdatePara() {
 		int sum = 0;
 		for (int j = 0; j < 3; ++j) { sum += transition_cnt[i][j]; }
 		for (int j = 0; j < 3; ++j) {
-			double val = 1.0 * transition_cnt[i][j] / sum;
+			double val = sum == 0 ? 0 : 1.0 * transition_cnt[i][j] / sum;
 			ret += abs(val - estimated_para_.transition_prob_[i][j]);
 			estimated_para_.transition_prob_[i][j] = val;
 		}

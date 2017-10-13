@@ -1,5 +1,6 @@
 #include <vector>
 #include <cstdio>
+#include <iostream>
 #include "coin_sequence.h" 
 #include "gibbs_sample.h"
 
@@ -14,14 +15,18 @@ void GenerateSequence(int length, std::vector<int>& state_sequence,
 }
 
 int main() {
+	int test_length = 10000;
 	std::vector<int> state_sequence;
 	std::vector<int> observed_sequence;
-	GenerateSequence(10000, state_sequence, observed_sequence);
-	GibbsSample gs = GibbsSample(10000, observed_sequence);
-	gs.Estimate();
-	for (int i = 0; i < 100; ++i) {
-		printf("Ground truth: %d, estimated: %d\n", state_sequence[i], gs.state_sequence_[i]);
+	GenerateSequence(test_length, state_sequence, observed_sequence);
+	/*
+	for (int i = 0; i < test_length; ++i) {
+		std::cout << "State: " << state_sequence[i] << "\t"
+			<< "Observed: " << observed_sequence[i] << std::endl;
 	}
-
+	*/
+	GibbsSample gs = GibbsSample(test_length, observed_sequence);
+	gs.Estimate();
+	gs.estimated_para_.PrintPara();
 	return 0;
 }

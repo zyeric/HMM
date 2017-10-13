@@ -11,11 +11,10 @@ public:
 
 private:
 	void InitSequence();
-	int UpdateFront();
-	int UpdateMid(int index);
-	int UpdateBack();
-	double UpdatePara();
-	int RandomSelectCoin(double *prob);
+	std::vector<double> CalProb(int index);
+	double UpdatePara(std::vector<std::vector<int>> sequences);
+	int RandomSelectCoin(std::vector<double> prob);
+	std::vector<int> GibbsSample::RandomSampleSequence(std::vector<std::vector<double>> probs);
 	UniformGenerator* gen;
 
 public:
