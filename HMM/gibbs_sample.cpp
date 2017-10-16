@@ -33,9 +33,13 @@ void GibbsSample::Estimate() {
 			seqs.push_back(RandomSampleSequence(probs));
 		}
 		double updt_sum = UpdatePara(seqs);
-		printf("Finish %d iteration, update sum: %.6lf.\n", iter_cnt, updt_sum);
+		//printf("Finish %d iteration, update sum: %.6lf.\n", iter_cnt, updt_sum);
 		std::swap(state_sequence_, seqs[0]);
 		if (updt_sum < eps) {
+			break;
+		}
+		if (iter_cnt >= 10000) {
+			std::cout << "Iter cnt >= 10000" << std::endl;
 			break;
 		}
 		++iter_cnt;
@@ -85,6 +89,7 @@ std::vector<double> GibbsSample::CalProb(int index) {
 	std::vector<double> prob(3, 1);
 	for (int i = 0; i < 3; ++i) {
 		if (index > 0) { prob[i] *= estimated_para_.transition_prob_[state_sequence_[index - 1]][i]; }
+		else { prob[i] *= estimated_para_.init_prob_[i]; }
 		if (index + 1 < length_) { prob[i] *= estimated_para_.transition_prob_[i][state_sequence_[index + 1]]; }
 		if (observed_sequence_[index]) { prob[i] *= estimated_para_.head_prob_[i]; }
 		else { prob[i] *= (1 - estimated_para_.head_prob_[i]); }
