@@ -142,15 +142,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="baum_welch.cpp" />
     <ClCompile Include="gibbs_sample.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="coin_sequence.cpp" />
     <ClCompile Include="uniform_generator.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="baum_welch.h" />
     <ClInclude Include="gibbs_sample.h" />
     <ClInclude Include="coin_sequence.h" />
     <ClInclude Include="uniform_generator.h" />
+    <ClInclude Include="util.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

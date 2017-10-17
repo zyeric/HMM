@@ -27,6 +27,9 @@
     <ClCompile Include="uniform_generator.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="baum_welch.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="gibbs_sample.h">
@@ -36,6 +39,12 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="uniform_generator.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="baum_welch.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="util.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

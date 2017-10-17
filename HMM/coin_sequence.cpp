@@ -1,6 +1,5 @@
 #include "coin_sequence.h"
 #include "uniform_generator.h"
-#include <iostream>
 
 CoinSequence::CoinSequence() {
 	init_prob_ = { 1.0, 0.0, 0.0 };

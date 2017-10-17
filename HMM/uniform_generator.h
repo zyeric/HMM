@@ -1,6 +1,5 @@
 #pragma once
-#include <random>
-#include <numeric>
+#include "util.h"
 
 class UniformGenerator {
 public:

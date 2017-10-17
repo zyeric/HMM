@@ -1,12 +1,11 @@
 #include "gibbs_sample.h"
-#include <random>
-#include <numeric>
-#include <algorithm>
-#include <iostream>
 
 const int kSampleStep = 1;
+const double kTolerance = 1e-4;
+const int kMaxIteration = 10000;
 
-GibbsSample::GibbsSample(int length, std::vector<int> observed_sequence) {
+GibbsSample::GibbsSample(size_t length, std::vector<int>& observed_sequence) {
+	is_converged_ = false;
 	length_ = length;
 	for (auto item : observed_sequence) {
 		observed_sequence_.push_back(item);
@@ -23,27 +22,27 @@ GibbsSample::~GibbsSample() {
 void GibbsSample::Estimate() {
 	InitSequence();
 
-	double eps = 1e-4;
 	int iter_cnt = 1;
 	while (true) {
 		std::vector<std::vector<double>> probs;
-		for (int i = 0; i < length_; ++i) { probs.push_back(CalProb(i)); }
+		for (size_t i = 0; i < length_; ++i) { probs.push_back(CalProb(i)); }
 		std::vector<std::vector<int>> seqs;
 		for (int i = 0; i < kSampleStep; ++i) {
 			seqs.push_back(RandomSampleSequence(probs));
 		}
 		double updt_sum = UpdatePara(seqs);
-		//printf("Finish %d iteration, update sum: %.6lf.\n", iter_cnt, updt_sum);
 		std::swap(state_sequence_, seqs[0]);
-		if (updt_sum < eps) {
+		if (updt_sum < kTolerance) {
+			is_converged_ = true;
 			break;
 		}
-		if (iter_cnt >= 10000) {
-			std::cout << "Iter cnt >= 10000" << std::endl;
+		if (iter_cnt >= kMaxIteration) {
+			std::cout << "Iteration greater than " << kMaxIteration << std::endl;
 			break;
 		}
 		++iter_cnt;
 	}
+	if (is_converged_) { std::cout << "Iteration cnt: " << iter_cnt << std::endl; }
 }
 
 void GibbsSample::InitSequence() {
@@ -61,7 +60,7 @@ void GibbsSample::InitSequence() {
 	}
 }
 
-int GibbsSample::RandomSelectCoin(std::vector<double> prob) {
+int GibbsSample::RandomSelectCoin(std::vector<double>& prob) {
 	double val = gen->NextNumber();
 	int ret = -1;
 	if (val <= prob[0]) {
@@ -77,15 +76,15 @@ int GibbsSample::RandomSelectCoin(std::vector<double> prob) {
 }
 
 std::vector<int> GibbsSample::RandomSampleSequence(
-	std::vector<std::vector<double>> probs) {
+	std::vector<std::vector<double>>& probs) {
 	std::vector<int> ret(length_, 0);
-	for (int i = 0; i < length_; ++i) {
+	for (size_t i = 0; i < length_; ++i) {
 		ret[i] = RandomSelectCoin(probs[i]);
 	}
 	return ret;
 }
 
-std::vector<double> GibbsSample::CalProb(int index) {
+std::vector<double> GibbsSample::CalProb(size_t index) {
 	std::vector<double> prob(3, 1);
 	for (int i = 0; i < 3; ++i) {
 		if (index > 0) { prob[i] *= estimated_para_.transition_prob_[state_sequence_[index - 1]][i]; }
@@ -99,18 +98,18 @@ std::vector<double> GibbsSample::CalProb(int index) {
 	return prob;
 }
 
-double GibbsSample::UpdatePara(std::vector<std::vector<int>> sequences) {
+double GibbsSample::UpdatePara(std::vector<std::vector<int>>& sequences) {
 	std::vector<int> coin_cnt(3, 0);
 	std::vector<int> head_cnt(3, 0);
 	std::vector<std::vector<int>> transition_cnt(3, std::vector<int>(3, 0));
 
 	for (int j = 0; j < kSampleStep; ++j) {
-		for (int i = 0; i < length_; ++i) {
+		for (size_t i = 0; i < length_; ++i) {
 			++coin_cnt[sequences[j][i]];
 			if (observed_sequence_[i]) { ++head_cnt[sequences[j][i]]; }
 		}
 
-		for (int i = 0; i + 1 < length_; ++i) {
+		for (size_t i = 0; i + 1 < length_; ++i) {
 			++transition_cnt[sequences[j][i]][sequences[j][i + 1]];
 		}
 	}

@@ -1,5 +1,5 @@
 #pragma once
-#include <vector>
+#include "util.h"
 
 class CoinSequence{
 public:

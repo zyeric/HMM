@@ -1,6 +1,3 @@
-#include <vector>
-#include <cstdio>
-#include <iostream>
 #include "coin_sequence.h" 
 #include "gibbs_sample.h"
 
@@ -20,15 +17,8 @@ int main() {
 	std::vector<int> state_sequence;
 	std::vector<int> observed_sequence;
 	GenerateSequence(test_length, state_sequence, observed_sequence);
-	/*
-	for (int i = 0; i < test_length; ++i) {
-		std::cout << "State: " << state_sequence[i] << "\t"
-			<< "Observed: " << observed_sequence[i] << std::endl;
-	}
-	*/
 	GibbsSample gs = GibbsSample(test_length, observed_sequence);
 	gs.Estimate();
-	//gs.estimated_para_.PrintPara();
 	auto ret = gs.estimated_para_.CalHiddenState(observed_sequence);
 	int correct_cnt = 0;
 	for (int i = 0; i < test_length; ++i) {
