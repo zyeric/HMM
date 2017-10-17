@@ -152,6 +152,7 @@
     <ClInclude Include="baum_welch.h" />
     <ClInclude Include="gibbs_sample.h" />
     <ClInclude Include="coin_sequence.h" />
+    <ClInclude Include="para_estimator.h" />
     <ClInclude Include="uniform_generator.h" />
     <ClInclude Include="util.h" />
   </ItemGroup>
