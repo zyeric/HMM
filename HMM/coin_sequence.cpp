@@ -4,10 +4,24 @@
 CoinSequence::CoinSequence() {
 	init_prob_ = { 1.0, 0.0, 0.0 };
 	head_prob_ = { 0.5, 0.5, 0.5 };
+	/*
 	transition_prob_ =
 	{ {1.0 / 3.0, 1.0 / 3.0, 1.0 / 3.0}, 
 	  {1.0 / 3.0, 1.0 / 3.0, 1.0 / 3.0},
 	  {1.0 / 3.0, 1.0 / 3.0, 1.0 / 3.0} };
+	*/
+	transition_prob_.assign(3, std::vector<double>(3, 0));
+	UniformGenerator* gen = new UniformGenerator(0, 1);
+	for (int i = 0; i < 3; ++i) {
+		double sum = 0;
+		for (int j = 0; j < 3; ++j) {
+			transition_prob_[i][j] = gen->NextNumber();
+			sum += transition_prob_[i][j];
+		}
+		for (int j = 0; j < 3; ++j) {
+			transition_prob_[i][j] /= sum;
+		}
+	}
 }
 
 CoinSequence::CoinSequence(std::vector<double> init_prob,

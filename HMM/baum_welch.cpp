@@ -19,7 +19,8 @@ void BaumWelch::Estimate() {
 }
 
 void BaumWelch::CalForwardProb() {
-	forward_prob_[0][0] = estimated_para_.head_prob_[0];
+	forward_prob_[0][0] = observed_sequence_[0] ?
+		estimated_para_.head_prob_[0] : (1 - estimated_para_.head_prob_[0]);
 	forward_prob_[0][1] = 0;
 	forward_prob_[0][2] = 0;
 
