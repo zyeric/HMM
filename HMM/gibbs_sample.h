@@ -1,13 +1,12 @@
 #pragma once
-#include "util.h"
-#include "coin_sequence.h"
+#include "para_estimator.h"
 #include "uniform_generator.h"
 
-class GibbsSample {
+class GibbsSample : public ParaEstimator{
 public:
 	GibbsSample(size_t length, std::vector<int>& observerd_sequence);
 	~GibbsSample();
-	void Estimate();
+	void Estimate() override;
 
 private:
 	void InitSequence();
@@ -17,10 +16,7 @@ private:
 	std::vector<int> RandomSampleSequence(std::vector<std::vector<double>>& probs);
 	UniformGenerator* gen;
 
-public:
+private:
 	bool is_converged_;
-	size_t length_;
-	std::vector<int> observed_sequence_;
 	std::vector<int> state_sequence_;
-	CoinSequence estimated_para_;
 };

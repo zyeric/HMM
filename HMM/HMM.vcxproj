@@ -146,6 +146,7 @@
     <ClCompile Include="gibbs_sample.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="coin_sequence.cpp" />
+    <ClCompile Include="para_estimator.cpp" />
     <ClCompile Include="uniform_generator.cpp" />
   </ItemGroup>
   <ItemGroup>

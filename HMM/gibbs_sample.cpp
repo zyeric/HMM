@@ -4,14 +4,10 @@ const int kSampleStep = 1;
 const double kTolerance = 1e-4;
 const int kMaxIteration = 10000;
 
-GibbsSample::GibbsSample(size_t length, std::vector<int>& observed_sequence) {
+GibbsSample::GibbsSample(size_t length, std::vector<int>& observed_sequence) 
+	: ParaEstimator(length, observed_sequence){
 	is_converged_ = false;
-	length_ = length;
-	for (auto item : observed_sequence) {
-		observed_sequence_.push_back(item);
-	}
 	state_sequence_.resize(length);
-	estimated_para_ = CoinSequence();
 	gen = new UniformGenerator(0, 1);
 }
 
@@ -46,7 +42,7 @@ void GibbsSample::Estimate() {
 }
 
 void GibbsSample::InitSequence() {
-	for (int i = 0; i < length_; ++i) {
+	for (size_t i = 0; i < length_; ++i) {
 		double val = gen->NextNumber();
 		if (val <= 1.0 / 3.0) {
 			state_sequence_[i] = 0;
