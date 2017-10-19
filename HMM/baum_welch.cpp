@@ -1,7 +1,7 @@
 #include "baum_welch.h"
 
 BaumWelch::BaumWelch(size_t length, std::vector<int>& observed_sequence) : 
-	length_(length), observed_sequence_(observed_sequence) {
+	ParaEstimator(length, observed_sequence) {
 	forward_prob_.assign(length, std::vector<double>(3, 0));
 	backward_prob_.assign(length, std::vector<double>(3, 0));
 }

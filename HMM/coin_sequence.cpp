@@ -78,7 +78,7 @@ std::vector<int> CoinSequence::CalHiddenState(std::vector<int>& observed_sequenc
 		pre[1][i] = 0;
 	}
 
-	for (int i = 2; i < cur_length; ++i) {
+	for (size_t i = 2; i < cur_length; ++i) {
 		while (true) {
 			int cnt = 0;
 			for (int j = 0; j < 3; ++j) {

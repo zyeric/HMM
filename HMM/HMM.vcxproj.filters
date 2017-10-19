@@ -30,6 +30,9 @@
     <ClCompile Include="baum_welch.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="para_estimator.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="gibbs_sample.h">
